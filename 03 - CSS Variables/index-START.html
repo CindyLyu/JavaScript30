@@ -68,7 +68,7 @@
     <script>
       const inputs = document.querySelectorAll(".controls input");
 
-      function handleUpdate(event) {
+      function handleUpdate() {
         const suffix = this?.dataset?.sizing || "";
         // document.documentElement 是 html 的根元素，使用 style.setProperty 就可以設定 :root 內的變數
         document.documentElement.style.setProperty(
