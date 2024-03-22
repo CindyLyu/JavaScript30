@@ -25,9 +25,10 @@ input.search {
   text-align: center;
   outline: 0;
   border: 10px solid #F7F7F7;
-  width: 120%;
-  left: -10%;
-  position: relative;
+  width: 65%;
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
   top: 10px;
   z-index: 2;
   border-radius: 5px;
@@ -37,6 +38,7 @@ input.search {
 
 .suggestions {
   margin: 0;
+  margin-top: 120px;
   padding: 0;
   position: relative;
   /*perspective: 20px;*/

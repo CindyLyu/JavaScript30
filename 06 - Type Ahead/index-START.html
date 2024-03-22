@@ -1,23 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="https://fav.farm/🔥" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="https://fav.farm/🔥" />
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <form class="search-form">
+      <input type="text" class="search" placeholder="City or State" />
+      <ul class="suggestions">
+        <li>Filter for a city</li>
+        <li>or a state</li>
+      </ul>
+    </form>
+    <script>
+      function addThousandsSeparator(string) {
+        // NOTE: or  return string.replace(/\B(?=(\d{3})+(?!\d))/g, ","); or return Number(string).toLocaleString("en-US");
+        return string
+          .split("")
+          .reverse()
+          .join("")
+          .replaceAll(/(\d{3})/g, "$1,")
+          .replace(/,$/, "")
+          .split("")
+          .reverse()
+          .join("");
+      }
 
-  <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
-    <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
-    </ul>
-  </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+      const endpoint =
+        "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json";
+      let data;
 
-</script>
-</body>
+      // NOTE: 在一開始就先將資料抓好，不要寫進 handleInputChange 中，這樣每次輸入都會重新抓一次資料
+      axios.get(endpoint).then((res) => {
+        data = res.data;
+      });
+
+      function findMatches(keyword, data) {
+        return data.filter((item) => {
+          const regex = new RegExp(keyword, "gi");
+          return item.city.match(regex) || item.state.match(regex);
+        });
+      }
+
+      async function handleInputChange(e) {
+        const keyword = e.target.value;
+        const element = document.querySelector(".suggestions");
+
+        element.innerHTML = "";
+
+        // NOTE: 先抓出有符合的，取代在底下的 map 中去找出有符合的，減少多一層 if 的判斷
+        const matchArray = findMatches(keyword, data);
+
+        const html = matchArray
+          .map((place) => {
+            const regex = new RegExp(this.value, "gi");
+            const cityContent = place.city.replace(
+              regex,
+              `<span class='hl'>${keyword}</span>`
+            );
+
+            const stateContent = place.state.replace(
+              regex,
+              `<span class='hl'>${keyword}</span>`
+            );
+
+            // NOTE: 沒有將 city 包一層 span 的話，會因為有符合的 keyword 有包 span 加上 flex 影響造成換成的 city 被第一行的 keyword 給影響顯示
+            return `<li><span class="name">${cityContent} ${stateContent}</span><span class="population">${addThousandsSeparator(
+              place?.population
+            )}</span></li>`;
+          })
+          .join(""); // NOTE: 直接 .join() 比起沒 .join() 後用 html.forEach 要再迴圈跑一次來的快很多
+
+        element.innerHTML = html;
+      }
+
+      document
+        .querySelector(".search")
+        .addEventListener("input", handleInputChange);
+    </script>
+  </body>
 </html>
