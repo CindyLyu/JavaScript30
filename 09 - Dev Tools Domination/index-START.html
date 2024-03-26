@@ -1,47 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Console Tricks!</title>
-  <link rel="icon" href="https://fav.farm/🔥" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Console Tricks!</title>
+    <link rel="icon" href="https://fav.farm/🔥" />
+  </head>
+  <body>
+    <p onClick="makeGreen()">×BREAK×DOWN×</p>
 
-  <p onClick="makeGreen()">×BREAK×DOWN×</p>
+    <script>
+      const dogs = [
+        { name: "Snickers", age: 2 },
+        { name: "hugo", age: 8 },
+      ];
 
-  <script>
-    const dogs = [{ name: 'Snickers', age: 2 }, { name: 'hugo', age: 8 }];
+      function makeGreen() {
+        const p = document.querySelector("p");
+        p.style.color = "#BADA55";
+        p.style.fontSize = "50px";
+      }
 
-    function makeGreen() {
-      const p = document.querySelector('p');
-      p.style.color = '#BADA55';
-      p.style.fontSize = '50px';
-    }
+      // Regular
 
-    // Regular
+      // Interpolated
+      console.log("Hello I am a %s string! %s", "💩", "hahaha");
 
-    // Interpolated
+      // Styled
+      console.log(
+        "%c I am some great text",
+        "font-size:10px; background:red; text-shadow: 10px 10px 0 blue"
+      );
 
-    // Styled
+      // warning!
+      console.warn("OH NOOO");
 
-    // warning!
+      // Error :|
+      console.error("Error Test");
 
-    // Error :|
+      // Info
+      console.info("Info Test");
+      console.debug("debug");
 
-    // Info
+      // Testing
+      // NOTE: false 的時候 console.assert 出現
+      console.assert(false, "df");
 
-    // Testing
+      // clearing
+      console.clear();
 
-    // clearing
+      // Viewing DOM Elements
+      const p = document.querySelector("p");
+      console.log(p);
+      console.dir(p);
 
-    // Viewing DOM Elements
+      // Grouping together
 
-    // Grouping together
+      // counting
+      console.count("dog");
+      console.count("dog");
+      console.count("cat");
 
-    // counting
+      // timing
+      console.time("fetching data");
+      async function fetchData() {
+        const response = await fetch("https://api.github.com/users/wesbos");
+        const data = await response.json();
+        console.timeEnd("fetching data");
+        console.log(93, data);
+      }
 
-    // timing
-
-  </script>
-</body>
+      fetchData();
+    </script>
+  </body>
 </html>
