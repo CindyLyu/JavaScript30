@@ -100,11 +100,6 @@
       const items = document.querySelectorAll(".item");
       let firstIndex = -1;
 
-      /** TODO: 像 gmail 那樣可以反向取消 checked（解答：https://stackoverflow.com/questions/659508/how-can-i-shift-select-multiple-checkboxes-like-gmail/659571#659571）
-       * 問題一：做到可以反向取消，但頭尾會有問題
-       * 問題二：已經選取的會被勾選掉
-       */
-
       container.addEventListener("click", function (event) {
         const target = event.target;
         const parentNode = target.parentNode;
@@ -116,9 +111,9 @@
             const secondIndex = Array.from(items).indexOf(parentNode);
             const minIndex = Math.min(firstIndex, secondIndex);
             const maxIndex = Math.max(firstIndex, secondIndex);
-            for (let i = minIndex + 1; i < maxIndex; i++) {
-              console.log(117, items[i].querySelector("input").checked);
-              items[i].querySelector("input").checked = true;
+            for (let i = minIndex; i <= maxIndex; i++) {
+              items[i].querySelector("input").checked =
+                items[maxIndex].querySelector("input").checked;
             }
           }
           firstIndex = Array.from(items).indexOf(parentNode);
