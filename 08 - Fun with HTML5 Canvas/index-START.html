@@ -1,20 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>HTML5 Canvas</title>
-  <link rel="icon" href="https://fav.farm/🔥" />
-</head>
-<body>
-<canvas id="draw" width="800" height="800"></canvas>
-<script>
-</script>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 Canvas</title>
+    <link rel="icon" href="https://fav.farm/🔥" />
+    <style>
+      #draw {
+        border: solid 1px grey;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="switch-button">切換成橡皮擦</button>
+    <div class="range">
+      <input type="range" id="range" min="0" max="20" value="1" />
+      <label for="range">大小</label>
+    </div>
+    <canvas id="draw" width="800" height="600"></canvas>
+    <script>
+      let isDrawing = false;
+      let lastX = 0;
+      let lastY = 0;
+      let hsl = { hue: 0, saturation: 100, lightness: 50 };
+      let isBrush = true;
+      let globalCompositeOperation = "source-over";
+      let eraserLineWidth = 15;
+      let brushLineWidth = 1;
+      let lineWidth;
+      const rangeElement = document.querySelector("#range");
+      const switchButton = document.querySelector(".switch-button");
 
-<style>
-  html, body {
-    margin: 0;
-  }
-</style>
+      function handleMouseDown(e) {
+        if (e.target.parentNode.classList.contains("range")) return;
+        isDrawing = true;
+        lastX = e.offsetX;
+        lastY = e.offsetY;
+      }
 
-</body>
+      function handleMouseMove(e) {
+        if (!isDrawing) return;
+        let dx = e.offsetX - lastX;
+        let dy = e.offsetY - lastY;
+
+        const range = document.querySelector("#range").value;
+        const canvas = document.getElementById("draw");
+        let ctx = canvas.getContext("2d");
+
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.strokeStyle = `hsl(${hsl.hue}, ${hsl.saturation}%, ${hsl.lightness}%)`;
+        ctx.globalCompositeOperation = globalCompositeOperation;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+        hsl.hue++;
+        // NOTE: hsl() 第一個值代表色相，色相是一個 0~360 的值
+        if (hsl.hue > 360) {
+          hsl.hue = 0;
+        }
+
+        lastX = e.offsetX;
+        lastY = e.offsetY;
+      }
+
+      function handleSwitchButtonClick() {
+        isBrush = !isBrush;
+        if (isBrush) {
+          switchButton.innerText = "切換成橡皮擦";
+          hsl = { hue: 0, saturation: 100, lightness: 50 };
+          lineWidth = brushLineWidth;
+
+          // NOTE: 改回成預設值
+          globalCompositeOperation = "source-over";
+        } else {
+          switchButton.innerText = "切換成筆刷";
+          lineWidth = eraserLineWidth;
+
+          // NOTE: 繪製在原本繪製的目標上會將重疊的部分清除
+          globalCompositeOperation = "destination-out";
+        }
+        rangeElement.value = lineWidth;
+      }
+
+      function handleRangeChange(event) {
+        const currentLineWidth = event.target.value;
+        if (isBrush) {
+          brushLineWidth = currentLineWidth;
+        } else {
+          eraserLineWidth = currentLineWidth;
+        }
+      }
+
+      switchButton.addEventListener("click", handleSwitchButtonClick);
+      document.addEventListener("mousedown", handleMouseDown);
+      document.addEventListener("mouseup", () => (isDrawing = false));
+      document.addEventListener("mousemove", handleMouseMove);
+      rangeElement.addEventListener("change", handleRangeChange);
+
+      // NOTE: mouseout 用在當滑鼠移出畫布時
+    </script>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+
+      .range {
+        display: flex;
+      }
+    </style>
+  </body>
 </html>
